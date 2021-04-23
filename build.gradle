@@ -1,0 +1,50 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.micronaut.application") version "1.4.2"
+
+    id("io.freefair.lombok") version "6.0.0-m2"
+
+}
+
+version = "0.1"
+group = "org.my.example"
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("org.my.example.*")
+    }
+}
+
+dependencies {
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut:micronaut-aop")
+    annotationProcessor("io.micronaut:micronaut-inject-java")
+
+    implementation("io.micronaut.redis:micronaut-redis-lettuce")
+    testImplementation("com.github.kstyrc:embedded-redis:0.6")
+
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa")
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("mysql:mysql-connector-java:5.1.13")
+
+    runtimeOnly("ch.qos.logback:logback-classic")
+}
+
+application {
+    mainClass.set("org.my.example.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.11")
+    targetCompatibility = JavaVersion.toVersion("1.11")
+}
