@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.exceptions.ConversionErrorException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -43,9 +44,9 @@ public class ApiController {
         return HttpResponse.accepted().body(shortened);
     }
 
-    @Error(exception = InvalidFormatException.class)
+    @Error(exception = ConversionErrorException.class)
     public HttpResponse<?> jsonErrorHttpResponse(HttpRequest<?> request,
-                                                 InvalidFormatException e) {
+                                                 Throwable e) {
 
         return HttpResponse.badRequest("fix your json");
     }

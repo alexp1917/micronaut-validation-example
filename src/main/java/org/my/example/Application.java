@@ -4,9 +4,11 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.runtime.server.event.ServerStartupEvent;
+import lombok.SneakyThrows;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +33,7 @@ public class Application {
     @Inject
     private EmbeddedServer embeddedServer;
 
+    @SneakyThrows
     @EventListener
     public void onStartup(ServerStartupEvent startupEvent) {
         URL url = embeddedServer.getURL();
@@ -39,13 +42,14 @@ public class Application {
 
         System.out.println("baseUrl: " + s);
 
+        URLConnection conn = null;
         try {
             URL broken = new URL(s + "/api/required");
-            URLConnection conn = broken.openConnection();
+            conn = broken.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
 
-            String requestBody = "{\"code\":\"okay\",\"url\":\"http://fake-some\"}";
+            String requestBody = "{\"code\":\"okay\",\"url\":\"fake-some\"}";
             conn.getOutputStream().write((requestBody).getBytes(StandardCharsets.UTF_8));
 
             byte[] bytes = conn.getInputStream().readAllBytes();
@@ -53,6 +57,14 @@ public class Application {
 
             System.out.println(responseBody);
         } catch (Exception e) {
+            if (conn != null) {
+                String returnedErrorMessage =
+                        new String(((HttpURLConnection) conn).getErrorStream().readAllBytes());
+
+                e = new Exception(e.getMessage() + "\n\n\n" +
+                        returnedErrorMessage, e);
+            }
+
             e.printStackTrace();
         }
 
