@@ -38,6 +38,8 @@ dependencies {
     runtimeOnly("mysql:mysql-connector-java:5.1.13")
 
     runtimeOnly("ch.qos.logback:logback-classic")
+
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
 application {

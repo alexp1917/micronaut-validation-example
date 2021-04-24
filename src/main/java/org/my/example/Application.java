@@ -34,7 +34,7 @@ public class Application {
     private EmbeddedServer embeddedServer;
 
     @SneakyThrows
-    @EventListener
+    // @EventListener
     public void onStartup(ServerStartupEvent startupEvent) {
         URL url = embeddedServer.getURL();
         String s = url.toString();
