@@ -5,6 +5,7 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.QueryValue;
 import org.my.example.service.Cache;
 import org.my.example.service.Shortener;
 
@@ -16,6 +17,11 @@ public class ShortenedController {
 
     public ShortenedController(Shortener shortener) {
         this.shortener = shortener;
+    }
+
+    @Get("/some/other/route")
+    public HttpResponse<?> example(@QueryValue String required) {
+        return HttpResponse.ok("required is " + required);
     }
 
     @Get("/{shortenedCode}")
