@@ -13,6 +13,7 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.web.router.exceptions.UnsatisfiedBodyRouteException;
 import org.my.example.model.Shortened;
 
 import java.util.Date;
@@ -42,6 +43,11 @@ public class ApiController {
         // ByteBuf content = req.content();
         String s = request.getBody(String.class).orElse(null);
         return HttpResponse.accepted().body(shortened);
+    }
+
+    @Error(exception = UnsatisfiedBodyRouteException.class)
+    public HttpResponse<?> handle(UnsatisfiedBodyRouteException e) {
+        return null;
     }
 
     @Error(exception = ConversionErrorException.class)

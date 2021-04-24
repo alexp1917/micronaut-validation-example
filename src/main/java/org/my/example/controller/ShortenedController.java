@@ -3,9 +3,12 @@ package org.my.example.controller;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.web.router.exceptions.UnsatisfiedBodyRouteException;
+import io.micronaut.web.router.exceptions.UnsatisfiedQueryValueRouteException;
 import org.my.example.service.Cache;
 import org.my.example.service.Shortener;
 
@@ -17,6 +20,15 @@ public class ShortenedController {
 
     public ShortenedController(Shortener shortener) {
         this.shortener = shortener;
+    }
+
+    @Error(exception = UnsatisfiedBodyRouteException.class, global = true)
+    public HttpResponse<?> handle(UnsatisfiedBodyRouteException e) {
+        return null;
+    }
+    @Error(exception = UnsatisfiedQueryValueRouteException.class, global = true)
+    public HttpResponse<?> handle(UnsatisfiedQueryValueRouteException e) {
+        return null;
     }
 
     @Get("/some/other/route")
