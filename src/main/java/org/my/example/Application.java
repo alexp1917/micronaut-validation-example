@@ -1,13 +1,15 @@
 package org.my.example;
 
-import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.runtime.server.event.ServerStartupEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -30,12 +32,29 @@ public class Application {
     private EmbeddedServer embeddedServer;
 
     @EventListener
-    public void onStartup(StartupEvent startupEvent) {
+    public void onStartup(ServerStartupEvent startupEvent) {
         URL url = embeddedServer.getURL();
         String s = url.toString();
         // String s = "url.toString()";
 
         System.out.println("baseUrl: " + s);
+
+        try {
+            URL broken = new URL(s + "/api/required");
+            URLConnection conn = broken.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            String requestBody = "{\"code\":\"okay\",\"url\":\"http://fake-some\"}";
+            conn.getOutputStream().write((requestBody).getBytes(StandardCharsets.UTF_8));
+
+            byte[] bytes = conn.getInputStream().readAllBytes();
+            String responseBody = new String(bytes);
+
+            System.out.println(responseBody);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
